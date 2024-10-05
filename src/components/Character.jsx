@@ -84,13 +84,13 @@ export default function Character({
     }, [skillPoints, availableSkillPoints]);
 
     return (
-        <div className="flex flex-col gap-3 bg-white text-black pt-5">
+        <div className="flex flex-col gap-3 bg-white text-black py-5">
             <h1 className="text-center block text-xl">{character.title}</h1>
             <Card title="Skill Check">
                 <SkillCheck character={character} attributes={attributes} skillPoints={skillPoints} />
             </Card>
             <div className="flex gap-3 justify-around">
-                <Card title="Attributes">
+                <Card className="h-fit" title="Attributes">
                     <div className="flex flex-col">
                         {Object.keys(attributes).map((attributeTitle, index) => (
                             <Attribute
@@ -105,7 +105,7 @@ export default function Character({
                     </div>
                 </Card>
 
-                <Card title="Classes">
+                <Card className="h-fit" title="Classes">
                     <div className="flex flex-col items-center">
                         {Object.keys(CLASS_LIST).map((classTitle, index) => (
                             <span key={index} onClick={() => setSelectedClass({
@@ -120,6 +120,7 @@ export default function Character({
 
                 {selectedClass && (
                     <Card
+                        className="h-fit"
                         actions={[<Button onClick={() => setSelectedClass()}>Close Requirements</Button>]}
                         title={<>{selectedClass.title} minimum requirements</>}
                     >
