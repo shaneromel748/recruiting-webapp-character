@@ -4,6 +4,7 @@ import Attribute from "./Attribute";
 import { CLASS_LIST, SKILL_LIST } from "../consts";
 import { getModifierValue } from "../utils";
 import Skill from "./Skill";
+import SkillCheck from "./SkillCheck";
 
 export default function Character({
     character
@@ -72,64 +73,69 @@ export default function Character({
     }, [skillPoints, availableSkillPoints]);
 
     return (
-        <div className="flex gap-3">
-            <Card title="Attributes">
-                <div className="flex flex-col">
-                    {Object.keys(attributes).map((attributeTitle, index) => (
-                        <Attribute
-                            key={index}
-                            attribute={{
-                                title: attributeTitle,
-                                points: attributes[attributeTitle].points
-                            }}
-                            onPointsChange={handleAttributesChange}
-                        />
-                    ))}
-                </div>
+        <div className="flex flex-col gap-3">
+            <Card title="Skill Check">
+                <SkillCheck character={character} attributes={attributes} skillPoints={skillPoints} />
             </Card>
-
-            <Card title="Classes">
-                <div className="flex flex-col items-center">
-                    {Object.keys(CLASS_LIST).map((classTitle, index) => (
-                        <span key={index} onClick={() => setSelectedClass({
-                            title: classTitle,
-                            requirements: CLASS_LIST[classTitle]
-                        })} className="cursor-pointer" style={{
-                            color: eligibleClasses.includes(classTitle) ? "green" : "black"
-                        }}>{classTitle}</span>
-                    ))}
-                </div>
-            </Card>
-
-            {selectedClass && (
-                <Card
-                    actions={[<Button onClick={() => setSelectedClass()}>Close Requirements</Button>]}
-                    title={<>{selectedClass.title} minimum requirements</>}
-                >
-                    {Object.keys(selectedClass.requirements).map((requirement, index) => (
-                        <div key={index} className="flex gap-2 justify-between">
-                            <span>{requirement}</span>
-                            <span>{selectedClass.requirements[requirement]}</span>
-                        </div>
-                    ))}
+            <div className="flex gap-3 justify-around">
+                <Card title="Attributes">
+                    <div className="flex flex-col">
+                        {Object.keys(attributes).map((attributeTitle, index) => (
+                            <Attribute
+                                key={index}
+                                attribute={{
+                                    title: attributeTitle,
+                                    points: attributes[attributeTitle].points
+                                }}
+                                onPointsChange={handleAttributesChange}
+                            />
+                        ))}
+                    </div>
                 </Card>
-            )}
 
-            <Card title="Skills">
-                <span className="block text-center">Total Skill Points available: {availableSkillPoints}</span>
+                <Card title="Classes">
+                    <div className="flex flex-col items-center">
+                        {Object.keys(CLASS_LIST).map((classTitle, index) => (
+                            <span key={index} onClick={() => setSelectedClass({
+                                title: classTitle,
+                                requirements: CLASS_LIST[classTitle]
+                            })} className="cursor-pointer" style={{
+                                color: eligibleClasses.includes(classTitle) ? "green" : "black"
+                            }}>{classTitle}</span>
+                        ))}
+                    </div>
+                </Card>
 
-                <div className="flex flex-col gap-2">
-                    {SKILL_LIST.map((skill, index) => (
-                        <Skill
-                            key={index}
-                            skill={skill}
-                            modifier={getModifierValue(attributes[skill.attributeModifier].points)}
-                            points={skillPoints[skill.name]}
-                            updateSkillPoints={updateSkillPoints}
-                        />
-                    ))}
-                </div>
-            </Card>
+                {selectedClass && (
+                    <Card
+                        actions={[<Button onClick={() => setSelectedClass()}>Close Requirements</Button>]}
+                        title={<>{selectedClass.title} minimum requirements</>}
+                    >
+                        {Object.keys(selectedClass.requirements).map((requirement, index) => (
+                            <div key={index} className="flex gap-2 justify-between">
+                                <span>{requirement}</span>
+                                <span>{selectedClass.requirements[requirement]}</span>
+                            </div>
+                        ))}
+                    </Card>
+                )}
+
+                <Card title="Skills">
+                    <span className="block text-center">Total Skill Points available: {availableSkillPoints}</span>
+
+                    <div className="flex flex-col gap-2">
+                        {SKILL_LIST.map((skill, index) => (
+                            <Skill
+                                key={index}
+                                skill={skill}
+                                modifier={getModifierValue(attributes[skill.attributeModifier].points)}
+                                points={skillPoints[skill.name]}
+                                updateSkillPoints={updateSkillPoints}
+                            />
+                        ))}
+                    </div>
+                </Card>
+            </div>
         </div>
     )
 }
