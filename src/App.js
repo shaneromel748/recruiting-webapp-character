@@ -3,6 +3,7 @@ import './App.css';
 import { ATTRIBUTE_LIST, CLASS_LIST, SKILL_LIST } from './consts.js';
 import { Button, notification } from 'antd';
 import { getCharacters } from './utils.js';
+import Character from './components/Character.jsx';
 
 
 function App() {
@@ -86,6 +87,12 @@ function App() {
           <Button onClick={addCharacter}>Add New Character</Button>
           <Button>Reset All Characters</Button>
           <Button>Save All Characters</Button>
+        </div>
+
+        <div className='flex flex-col gap-4 mt-5'>
+          {characters.map((character, index) => (
+            <Character key={index} character={character} />
+          ))}
         </div>
       </section>
       {notificationContextHolder}

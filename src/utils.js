@@ -5,3 +5,5 @@ const characterApi = axios.create({
 });
 
 export const getCharacters = () => characterApi.get("/character").then(response => response.data?.body);
+
+export const getModifierValue = points => Math.floor((points - 10) / 2)
