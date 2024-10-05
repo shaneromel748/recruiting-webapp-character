@@ -7,13 +7,24 @@ import Skill from "./Skill";
 import SkillCheck from "./SkillCheck";
 
 export default function Character({
-    character
+    character,
+    onCharacterChanged
 }) {
     const [attributes, setAttributes] = useState(character.attributes);
     const [selectedClass, setSelectedClass] = useState();
     const [eligibleClasses, setEligibleClasses] = useState([]);
     const [skillPoints, setSkillPoints] = useState(character.skillPoints);
     const [availableSkillPoints, setAvailableSkillPoints] = useState(0);
+
+    useEffect(() => {
+        const updatedCharacter = {
+            ...character,
+            attributes,
+            skillPoints
+        };
+
+        onCharacterChanged(updatedCharacter);
+    }, [attributes, skillPoints]);
 
     useEffect(() => {
         for (let classTitle in CLASS_LIST) {
