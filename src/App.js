@@ -27,7 +27,7 @@ function App() {
   const fetchCharacters = useCallback(async () => {
     try {
       const characters = await getCharacters();
-      console.log("characters", characters);
+
       setCharacters(characters);
     } catch (err) {
       console.log(err);

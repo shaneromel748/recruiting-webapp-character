@@ -84,7 +84,8 @@ export default function Character({
     }, [skillPoints, availableSkillPoints]);
 
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 bg-white text-black pt-5">
+            <h1 className="text-center block text-xl">{character.title}</h1>
             <Card title="Skill Check">
                 <SkillCheck character={character} attributes={attributes} skillPoints={skillPoints} />
             </Card>
