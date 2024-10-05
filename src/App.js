@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import { ATTRIBUTE_LIST, CLASS_LIST, SKILL_LIST } from './consts.js';
 import { Button, Card, notification } from 'antd';
-import { getCharacters, getTotalSkillPoints } from './utils.js';
+import { getCharacters, getTotalSkillPoints, postCharacters } from './utils.js';
 import Character from './components/Character.jsx';
 import SkillCheck from './components/SkillCheck.jsx';
 
@@ -103,6 +103,24 @@ function App() {
     })
   }, [characters]);
 
+  const resetCharacters = useCallback(() => {
+    setCharacters([]);
+  }, [characters]);
+
+  const saveCharacters = useCallback(async () => {
+    try {
+      await postCharacters(characters);
+      notificationApi.success({
+        message: "Characters saved successfully"
+      })
+    } catch (err) {
+      console.log(err);
+      notificationApi.error({
+        message: "Something went wrong while saving characters"
+      })
+    }
+  }, [characters]);
+
   return (
     <div className="App">
       <header className="App-header py-5">
@@ -111,8 +129,8 @@ function App() {
       <section className="App-section">
         <div className='flex gap-3 justify-center py-5'>
           <Button onClick={addCharacter}>Add New Character</Button>
-          <Button>Reset All Characters</Button>
-          <Button>Save All Characters</Button>
+          <Button onClick={resetCharacters}>Reset All Characters</Button>
+          <Button onClick={saveCharacters}>Save All Characters</Button>
         </div>
 
         <Card title="Party Skill Check">
