@@ -1,7 +1,9 @@
 import { Button, Card } from "antd";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Attribute from "./Attribute";
-import { CLASS_LIST } from "../consts";
+import { CLASS_LIST, SKILL_LIST } from "../consts";
+import { getModifierValue } from "../utils";
+import Skill from "./Skill";
 
 export default function Character({
     character
@@ -9,6 +11,8 @@ export default function Character({
     const [attributes, setAttributes] = useState(character.attributes);
     const [selectedClass, setSelectedClass] = useState();
     const [eligibleClasses, setEligibleClasses] = useState([]);
+    const [skillPoints, setSkillPoints] = useState(character.skillPoints);
+    const [availableSkillPoints, setAvailableSkillPoints] = useState(0);
 
     useEffect(() => {
         for (let classTitle in CLASS_LIST) {
@@ -19,15 +23,21 @@ export default function Character({
                 const requirementValue = requirements[requirement];
                 const characterValue = attributes[requirement].points || 0;
 
-                if(requirementValue > characterValue) {
+                if (requirementValue > characterValue) {
                     isEligible = false;
                 }
             }
 
-            if(isEligible) {
+            if (isEligible) {
                 setEligibleClasses(prevEligibleClasses => [...prevEligibleClasses, classTitle]);
             }
         }
+
+        const intelligencePoints = attributes["Intelligence"]?.points || 0;
+        const intelligenceModifier = getModifierValue(intelligencePoints);
+        const skillPoints = Math.max(0, 10 + 4 * intelligenceModifier);
+
+        setAvailableSkillPoints(skillPoints);
     }, [attributes]);
 
     const handleAttributesChange = (attributeTitle, newPoints) => {
@@ -50,6 +60,16 @@ export default function Character({
             }
         })
     }
+
+    const updateSkillPoints = useCallback((skillName, value) => {
+        const totalSkillPoints = Object.keys(skillPoints).reduce((acc, curr) => acc + skillPoints[curr], 0);
+
+        if ((totalSkillPoints + value) <= availableSkillPoints) {
+            setSkillPoints({ ...skillPoints, [skillName]: skillPoints[skillName] + value });
+        } else {
+            alert("Not enough skill points available");
+        }
+    }, [skillPoints, availableSkillPoints]);
 
     return (
         <div className="flex gap-3">
@@ -82,7 +102,7 @@ export default function Character({
             </Card>
 
             {selectedClass && (
-                <Card 
+                <Card
                     actions={[<Button onClick={() => setSelectedClass()}>Close Requirements</Button>]}
                     title={<>{selectedClass.title} minimum requirements</>}
                 >
@@ -94,6 +114,22 @@ export default function Character({
                     ))}
                 </Card>
             )}
+
+            <Card title="Skills">
+                <span className="block text-center">Total Skill Points available: {availableSkillPoints}</span>
+
+                <div className="flex flex-col gap-2">
+                    {SKILL_LIST.map((skill, index) => (
+                        <Skill
+                            key={index}
+                            skill={skill}
+                            modifier={getModifierValue(attributes[skill.attributeModifier].points)}
+                            points={skillPoints[skill.name]}
+                            updateSkillPoints={updateSkillPoints}
+                        />
+                    ))}
+                </div>
+            </Card>
         </div>
     )
 }
